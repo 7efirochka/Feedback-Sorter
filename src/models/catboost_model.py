@@ -39,6 +39,7 @@ class CatBoost(BaseModel):
         self.verbose = verbose
         self.model = None
         self.is_trained = False
+        self.save = True
 
     def train(self, X_train, y_train, X_val=None, y_val=None):
 

@@ -67,11 +67,8 @@ class PyTorchModel(BaseModel):
         self.epochs = epochs
         self.patience = patience
         self.random_state = random_state
-
-        if device is None:
-            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        else:
-            self.device = device
+        self.save = True
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.vectorizer = None
         self.model = None
@@ -142,7 +139,7 @@ class PyTorchModel(BaseModel):
         )
         criterion = nn.CrossEntropyLoss()
 
-        history = self._fit(
+        self._fit(
             self.model,
             train_loader,
             val_loader,
@@ -152,15 +149,7 @@ class PyTorchModel(BaseModel):
             epochs=self.epochs,
             patience=self.patience,
         )
-
         self.is_trained = True
-
-        if val_loader is not None:
-            val_loss, val_acc = self._evaluate(
-                self.model, val_loader, criterion, self.device
-            )
-
-            y_pred = self.predict(X_val)
 
         if X_val is not None and y_val is not None:
             return self.evaluate(X_val, y_val)
@@ -308,32 +297,16 @@ class PyTorchModel(BaseModel):
         if not self.is_trained:
             raise ValueError("Нельзя сохранить необученную модель")
 
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        self.model.cpu()
+        joblib.dump(self, path)
+        self.model.to(self.device)
 
-        save_dict = {
-            "model_state_dict": self.model.state_dict(),
-            "vectorizer": self.vectorizer,
-            "hidden_dims": self.hidden_dims,
-            "dropout": self.dropout,
-            "max_features": self.max_features,
-        }
-        torch.save(save_dict, path)
-
-    def load(self, path):
-        checkpoint = torch.load(path, map_location=self.device)
-        self.vectorizer = checkpoint["vectorizer"]
-
-        input_dim = self.max_features
-
-        self.model = TextClassifier(
-            input_dim=input_dim,
-            num_classes=3,
-            hidden_dims=checkpoint["hidden_dims"],
-            dropout=checkpoint["dropout"],
-        ).to(self.device)
-
-        self.model.load_state_dict(checkpoint["model_state_dict"])
-        self.is_trained = True
+    @classmethod
+    def load(cls, path):
+        instance = joblib.load(path)
+        instance.is_trained = True
+        instance.model.to(instance.device)
+        return instance
 
     def get_params(self):
         return {
@@ -363,5 +336,4 @@ if __name__ == "__main__":
     )
 
     metrics = model.train(X_train, y_train, X_val, y_val)
-
-    model.save("pytorch_metrics.pt")
+    model.save("src/saved_models/PyTorch.pkl")

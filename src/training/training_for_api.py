@@ -1,5 +1,6 @@
 from pathlib import Path
 import pandas as pd
+import joblib
 
 from src.data.loader import load_data
 from src.data.splitter import stratified_split
@@ -29,15 +30,20 @@ def train_all_models():
         ),  # меньше эпох для скорости
     }
 
-    results = []
-
     for name, model in models.items():
         metrics = model.train(X_full, y_full)
+
         Path("src/saved_models").mkdir(parents=True, exist_ok=True)
 
         save_path = f"src/saved_models/{name}.pkl"
-        model.save(save_path)
 
+        if name == "PyTorch":
+            joblib.dump(model, save_path, protocol=4)
+            model.model.to(model.device)
+        elif hasattr(model, "pipeline"):
+            joblib.dump(model.pipeline, save_path, protocol=4)
+        else:
+            joblib.dump(model, save_path, protocol=4)
     return
 
 
