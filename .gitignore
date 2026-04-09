@@ -1,0 +1,12 @@
+
+saved_models/
+*.pkl
+*.joblib
+*.pt
+*.pth
+
+
+.venv/
+venv/
+__pycache__/
+*.pyc
