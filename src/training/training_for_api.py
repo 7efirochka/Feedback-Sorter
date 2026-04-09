@@ -33,6 +33,7 @@ def train_all_models():
 
     for name, model in models.items():
         metrics = model.train(X_full, y_full)
+        Path("src/saved_models").mkdir(parents=True, exist_ok=True)
 
         save_path = f"src/saved_models/{name}.pkl"
         model.save(save_path)
@@ -40,6 +41,5 @@ def train_all_models():
     return
 
 
-# print(train_all_models())
 if __name__ == "__main__":
     train_all_models()
