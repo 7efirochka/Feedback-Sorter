@@ -39,7 +39,7 @@ def load_models():
 
     for model_file in models_path.glob("*.pkl"):
         model_name = model_file.stem
-        model_name = model_name
+
         try:
             obj = joblib.load(model_file)
             # Проверяем, что загружен объект с методом predict (пайторч заработай умоляю)
