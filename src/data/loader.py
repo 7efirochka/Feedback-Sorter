@@ -14,18 +14,9 @@ def clean_text(text):
     return text
 
 
-def load_data(file_path: str = "data/comments.csv"):
+def load_data(file_path: str = "src/data/data.csv"):
 
     df = pd.read_csv(file_path)
-
-    df = df.loc[:, ["text", "sentiments"]]
-
-    df = df.dropna(subset=["text"])
-
-    sentiment_map = {"neutral": 0, "positive": 1, "negative": 2}
-    df["sentiments"] = df["sentiments"].map(sentiment_map)
-
-    df.reset_index()
 
     df["text"] = df["text"].apply(clean_text)
 
