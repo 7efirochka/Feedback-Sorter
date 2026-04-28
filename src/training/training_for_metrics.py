@@ -39,7 +39,7 @@ def train_all_models():
     df_results = pd.DataFrame(results)
     df_results = df_results.sort_values("f1_macro", ascending=False)
 
-    df_results.to_csv("src/training/results/model_metrics_comparison")
+    df_results.to_csv("src/training/results/model_metrics_comparison.csv")
 
 
 train_all_models()
