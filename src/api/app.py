@@ -5,6 +5,9 @@ import joblib
 from pathlib import Path
 import numpy as np
 import sys
+import pandas as pd
+import json
+
 
 # import torch
 
@@ -122,3 +125,20 @@ def predict(request: TextRequest):
             results[name] = {"error": str(e)}
 
     return {"text": request.text, "prediction": results}
+
+
+@app.post("/metrics")
+def see_metrics():
+    project_root = Path(__file__).parent.parent.parent
+
+    metrics_file = (
+        project_root / "src" / "training" / "results" / "model_metrics_comparison.csv"
+    )
+
+    if not metrics_file.exists():
+        raise HTTPException(status_code=404, detail="Файл с метриками не найден")
+
+    df = pd.read_csv(metrics_file)
+    metrics_list = df.to_dict(orient="records")
+
+    return {"status": "success", "metrics": metrics_list}
