@@ -29,6 +29,14 @@ API для анализа тональности текстовых отзыво
 uv run python -m src.training.training_for_api
 ```
 
+#### 1.2 ОПИЦОНАЛЬНО посмотреть метрики моделей после обучения
+
+```bash
+uv run -m src.training.training_for_metrics
+```
+
+Метрики обученных моделей будут доступны по тому же API в ручке /metrics
+
 #### 2. Запуск API
 
 ```bash
