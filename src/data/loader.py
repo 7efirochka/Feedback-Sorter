@@ -18,18 +18,18 @@ def load_data(file_path: str = "data/comments.csv"):
 
     df = pd.read_csv(file_path)
 
-    df = df.loc[:, ["cleaned_review", "sentiments"]]
+    df = df.loc[:, ["text", "sentiments"]]
 
-    df = df.dropna(subset=["cleaned_review"])
+    df = df.dropna(subset=["text"])
 
     sentiment_map = {"neutral": 0, "positive": 1, "negative": 2}
     df["sentiments"] = df["sentiments"].map(sentiment_map)
 
     df.reset_index()
 
-    df["cleaned_review"] = df["cleaned_review"].apply(clean_text)
+    df["text"] = df["text"].apply(clean_text)
 
-    X = df["cleaned_review"]
+    X = df["text"]
     y = df["sentiments"]
 
     return X, y
