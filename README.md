@@ -32,10 +32,10 @@ uv run python -m src.training.training_for_api
 #### 2. Запуск API
 
 ```bash
-uvicorn src.api.main:app --reload
+uvicorn src.api.app:app --reload
 ```
 
-API будет доступен по адресу http://127.0.0.1:8000
+API будет доступен по адресу http://127.0.0.1:8000/docs
 
 
 ## Ограничения и планы на будущее
